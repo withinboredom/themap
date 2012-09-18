@@ -13,4 +13,10 @@ Version: 0.1
 Author URI: http://withinboredom.info
  */
 
-?>
+class TheMap_withinboredom {
+    
+    function __construct() {
+    }
+}
+
+$GLOBALS['TheMap_withinboredom'] = new TheMap_withinboredom();

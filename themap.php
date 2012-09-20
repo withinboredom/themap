@@ -13,9 +13,13 @@ Version: 0.1
 Author URI: http://withinboredom.info
  */
 
+if (!defined("WP_CONTENT_DIR")) exit();
+
 class TheMap_withinboredom {
     
     private $folders;
+    
+    public $settings;
     
     public function getFolders($folders )
     {
@@ -23,10 +27,9 @@ class TheMap_withinboredom {
     }
     
     public function applyConfig($config) {
-        $config = array();
         $config['tabs'] = array(
-            'settings' => 'settings.php',
-            'about' => 'about.php',
+            0 => array( 'Settings', 'tabs__settings_withinboredom'),
+            1 => array('About', 'tabs__about_withinboredom'),
             );
         $config['help'] = array(
             'settings' => array(
@@ -35,6 +38,9 @@ class TheMap_withinboredom {
             );
         $config['config'] = array(
                 'settings' => true,
+                'page_title' => 'TheMap',
+                'button_title' => 'TheMap',
+                'slug' => 'themap',
                 'shortcodes' => array(
                     'themap'
                 ),
@@ -55,8 +61,20 @@ class TheMap_withinboredom {
         add_filter("themap(applyConfig)", array(&$this, "applyConfig"), 1);
         add_filter("themap(shortcode(themap))", array(&$this, "shortcode"), 1);
         
-        require_once($this->folders['PluginDir'] . 'skel/skel.php');
-        $skel = new skel_withinboredom();
+        spl_autoload_register(array($this, "autoload"));
+        
+        $this->settings = new skel__settings();
+        
+        $skel = new skel__skel();
+    }
+    
+    static public function autoload($classname) {
+        $file = str_replace("__", "/", $classname);
+        $folders = apply_filters("themap(getFolders)", array());
+        if (file_exists($folders['PluginDir'] . $file . ".php"))
+            include_once($folders['PluginDir'] . $file . ".php");
+        else
+            echo "file no exists: " . $folders['PluginDir'] . $file . ".php\n";
     }
     
     private function BuildFolderList() {
@@ -69,3 +87,6 @@ class TheMap_withinboredom {
 }
 
 $GLOBALS['TheMap_withinboredom'] = new TheMap_withinboredom();
+
+//we don't want to autoload later on
+//spl_autoload_unregister(array($GLOBALS['TheMap_withinboredom'], 'autoload'));

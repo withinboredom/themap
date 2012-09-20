@@ -8,7 +8,9 @@
  * @version 0.1
  */
 
-class skel_withinboredom
+if (!defined("WP_CONTENT_DIR")) exit();
+
+class skel__skel
 {
     /**
      * The configuration of skel stored
@@ -25,13 +27,11 @@ class skel_withinboredom
         var_dump($this->config);
         
         if (isset($this->config['config'])) {
-            echo "Config is set\n";
             if (isset($this->config['config']['settings']) && $this->config['config']['settings']) {
-                echo "Have settings\n";
                 if (is_admin()) {
-                    //only process settings stuff if this is a request for an admin page
-                    echo "IS ADMIN\n";
                     
+                    //now we add a settings menu item
+                    add_action('admin_menu', array($this, 'buildSettings'));
                 }
             }
         }
@@ -40,9 +40,24 @@ class skel_withinboredom
     }
     
     /**
+     * Displays the admin page for a given tab, and defaults to tab 0
+     * Calls stuff
+     */
+    public function display() {
+        if(!isset($_GET['tab']))
+        {
+            $_GET['tab'] = 1;
+        }
+        
+        echo "viewing: " . $this->config['tabs'][0][1] . " <- here";
+        $display = new $this->config['tabs'][0][1];
+        $display->settings();
+    }
+    
+    /**
      * Builds the settings menu stuff
      */
     public function buildSettings() {
-        
+        add_options_page($this->config['config']['page_title'], $this->config['config']['button_title'], 'manage_options', $this->config['config']['slug'], array($this, "display"));
     }
 }

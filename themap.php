@@ -21,11 +21,19 @@ class TheMap_withinboredom {
     
     public $settings;
     
+    /**
+     * Get all our folders and return them
+     */
     public function getFolders($folders )
     {
         return array_merge_recursive($this->folders, $folders);
     }
     
+    /**
+     * Applies the configuration of the plugin
+     * @var array $config The config that is to be edited
+     * @return array The new config
+     */
     public function applyConfig($config) {
         $config['tabs'] = array(
             0 => array( 'Settings', 'tabs__settings_withinboredom'),
@@ -63,11 +71,16 @@ class TheMap_withinboredom {
         
         spl_autoload_register(array($this, "autoload"));
         
-        $this->settings = new skel__settings();
-        
         $skel = new skel__skel();
+        
+        //load settings last for updates
+        $this->settings = new skel__settings();
     }
     
+    /**
+     * Autoloads all classes as required to only load in what we need
+     * @var string $classname The name of the class to load
+     */
     static public function autoload($classname) {
         $file = str_replace("__", "/", $classname);
         $folders = apply_filters("themap(getFolders)", array());
@@ -77,6 +90,9 @@ class TheMap_withinboredom {
             echo "file no exists: " . $folders['PluginDir'] . $file . ".php\n";
     }
     
+    /**
+     * Builds a list of folders for later distribution so we can find ourselves
+     */
     private function BuildFolderList() {
         $this->folders = array();
         $this->folders['PluginDir'] = plugin_dir_path(__FILE__);

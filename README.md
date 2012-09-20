@@ -25,3 +25,16 @@ Actions
 * themap(update)
 * * Called when the plugin has been updated
 * * takes two args (old_version, new_version)
+
+Cool Features
+=============
+Uses autoloading
+
+```php
+static public function autoload($classname) {
+    $file = str_replace("__", "/", $classname);
+    $folders = apply_filters("themap(getFolders)", array());
+    if (file_exists($folders['PluginDir'] . $file . ".php"))
+        include_once($folders['PluginDir'] . $file . ".php");
+}
+```

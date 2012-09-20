@@ -38,3 +38,11 @@ static public function autoload($classname) {
         include_once($folders['PluginDir'] . $file . ".php");
 }
 ```
+
+so you can just say 
+
+```php
+$settings = new skel__settings();
+```
+
+and it will load skel/settings.php
